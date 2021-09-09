@@ -59,7 +59,7 @@ fun diff(n : Int, m : Int, text1 : List<String>, text2 : List<String>){
             }
         }
     }
-    println(dp[n][m])
+
 }
 
 /*
