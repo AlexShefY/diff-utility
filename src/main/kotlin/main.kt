@@ -2,7 +2,8 @@ import java.io.File
 
 val mod1 : Int = 998244353
 val mod2 : Int = (1e9).toInt() + 7
-val alph : Int = 28
+val mod = arrayOf(998244353, (1e9).toInt() + 7, 16769023, 1073676287)
+val alph : Int = 1200
 
 /*
  * Захэшруем строки из наборов, чтобы можно было быстро проверять их на равентсво.
@@ -15,25 +16,36 @@ val alph : Int = 28
  * Функция, считающая хэши для одной строки
  */
 fun hash_one_string(s1 : String) : Array <Long>{
-    var hash1 : Long = 0
-    var hash2 : Long = 0
+    var hash = Array<Long>(4){0L}
     for(j in 0 until s1.length) {
-        hash1 = (hash1 * alph + (s1[j]).toInt() - ('a').toInt() + 1) % mod1
-        hash2 = (hash2 * alph + (s1[j]).toInt() - ('a').toInt() + 1) % mod2
+        for(k in 0..3){
+            hash[k] = (hash[k] * alph + (s1[j]).toInt() + 1) % mod[k]
+        }
     }
-    return arrayOf(hash1, hash2)
+    return hash
 }
 /*
  * Функция, подсчитывающая хэши для набора строк
  */
 fun hashes(n : Int, s1 : List <String>) : Array<Array<Long>>{
-    var hashof : Array<Array<Long>> = Array(n) {Array (2) {0} }
+    var hashof : Array<Array<Long>> = Array(n) {Array (4) {0} }
     for(i in 0 until n){
         hashof[i] = hash_one_string(s1[i])
     }
     return hashof
 }
-
+/*
+ * Функция, определяющая по подсчитанным хэшам для двух строк равны ли эти строки
+ */
+fun check_hashes_equals(a : Array<Long>, b : Array<Long>) : Boolean
+{
+    for(i in 0..3){
+        if(a[i] != b[i]){
+            return false
+        }
+    }
+    return true
+}
 
 /*
  * Отдельная функция для подсчета массивов, предназначенных для восстановления наибольшей общей подпоследовательности
@@ -43,7 +55,7 @@ fun calc_dp(n : Int, m : Int, hashfirst : Array<Array<Long>>, hashsecond : Array
      * Функция equals сравнивает две строки сравнением хэшей, насчитанных по этим строкам.
      */
     fun equals(i : Int, j : Int) : Boolean{
-        return hashfirst[i][0] == hashsecond[j][0] && hashfirst[i][1] == hashsecond[j][1]
+        return check_hashes_equals(hashfirst[i], hashsecond[j])
     }
     var first : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} }
     var second : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} } // first[i][j] и second[i][j] служат для восстановления ответа и
@@ -73,6 +85,7 @@ fun calc_dp(n : Int, m : Int, hashfirst : Array<Array<Long>>, hashsecond : Array
     print(dp[n][m])
     return arrayOf(first, second)
 }
+
 fun diff(n : Int, m : Int, text1 : List<String>, text2 : List<String>){
     var hashfirst = hashes(n, text1) // подсчитываем хэши для первого текста
     var hashsecond = hashes(m, text2) // подсчитываем хэши для второго текста
@@ -88,6 +101,7 @@ fun diff(n : Int, m : Int, text1 : List<String>, text2 : List<String>){
  * В функции main я считываю содержимое двух файлов в text1 и text2 и вызываю функцию diff.
  */
 fun main(args: Array<String>) {
+
     var n : Int = 0
     var m : Int = 0
 

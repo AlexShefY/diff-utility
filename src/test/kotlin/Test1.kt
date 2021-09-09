@@ -25,4 +25,15 @@ internal class Test1 {
         assertEquals("16", stream.toString().trim())
         //assert(true)
     }
+
+    @Test
+    fun test_hashes(){
+        assert(!check_hashes_equals(hash_one_string("a"), hash_one_string("b")))
+        assert(check_hashes_equals(hash_one_string("akhdkajdhshkfjd"), hash_one_string("akhdkajdhshkfjd")))
+        assert(!check_hashes_equals(hash_one_string("aab"), hash_one_string("baa")))
+        assert(!check_hashes_equals(hash_one_string("abc\n"), hash_one_string("abc")))
+        assert(!check_hashes_equals(hash_one_string("abc "), hash_one_string("abc")))
+        assert(check_hashes_equals(hash_one_string("объёма информации."), hash_one_string("объёма информации.")))
+        assert(!check_hashes_equals(hash_one_string("Это важное замечание!"), hash_one_string("Это важное\\замечание!")))
+    }
 }
