@@ -18,6 +18,7 @@ internal class Test1 {
         System.setOut(standardOut)
         System.setIn(standardIn)
     }
+
     @Test
     fun test1() {
         main(arrayOf("file1.txt", "file2.txt"))

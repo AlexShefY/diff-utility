@@ -68,6 +68,7 @@ fun diff(n : Int, m : Int, text1 : List<String>, text2 : List<String>){
 fun main(args: Array<String>) {
     var n : Int = 0
     var m : Int = 0
+
     var text1 = mutableListOf<String>()
     var text2 = mutableListOf<String>()
     File(args[0]).useLines {lines -> lines.forEach{text1.add(it)
