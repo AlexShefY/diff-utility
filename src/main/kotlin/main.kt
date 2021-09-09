@@ -1,5 +1,8 @@
 import java.io.File
 
+/*
+ * Модули для подсчета хэшей
+ */
 val mod1 : Int = 998244353
 val mod2 : Int = (1e9).toInt() + 7
 val mod = arrayOf(998244353, (1e9).toInt() + 7, 16769023, 1073676287)
@@ -82,8 +85,61 @@ fun calc_dp(n : Int, m : Int, hashfirst : Array<Array<Long>>, hashsecond : Array
             }
         }
     }
-    print(dp[n][m])
     return arrayOf(first, second)
+}
+
+/*
+ * Цвета для подкрашивания результата
+ */
+val RESET : String = "\u001B[0m";
+val RED : String = "\u001B[31m";
+var GREEN : String = "\u001B[32m";
+
+
+/*
+ * Восстанавливает ответ по динамике. Выводит построчно добавленные, неизмененные и удаленные строки
+ */
+fun print_answer(n : Int, m : Int, text1 : List<String>, text2 : List<String>, first : Array<Array<Int>>, second : Array<Array<Int>>){
+    var answer = mutableListOf<String>()
+    var i = n
+    var j = m
+    var _size = 0
+    while(i > 0 || j > 0){
+        println("$i $j")
+        var i1 = first[i][j]
+        var j1 = second[i][j]
+        var t = j
+        while(t > j1){
+            _size++
+            answer.add("+${text2[t - 1]}")
+            t--
+        }
+        t = i
+        while(t > i1) {
+            _size++
+            answer.add("-${text1[t - 1]}")
+            t--
+        }
+        if(i1 != 0) {
+            _size++
+            answer.add("=${text1[i1 - 1]}")
+        }
+        i = i1 - 1
+        j = j1 - 1
+    }
+    while(_size > 0){
+        _size--
+        if(answer[_size][0] == '+'){
+            println(GREEN + "${answer[_size]}" + RESET);
+        }
+        else if(answer[_size][0] == '-'){
+            println(RED + "${answer[_size]}" + RESET);
+        }
+        else
+        {
+            println("${answer[_size]}");
+        }
+    }
 }
 
 fun diff(n : Int, m : Int, text1 : List<String>, text2 : List<String>){
@@ -94,22 +150,20 @@ fun diff(n : Int, m : Int, text1 : List<String>, text2 : List<String>){
     var cur = calc_dp(n, m, hashfirst, hashsecond)
     first = cur[0]
     second = cur[1]
-
+    print_answer(n, m, text1, text2, first, second)
 }
 
 /*
  * В функции main я считываю содержимое двух файлов в text1 и text2 и вызываю функцию diff.
  */
 fun main(args: Array<String>) {
-
     var n : Int = 0
     var m : Int = 0
-
     var text1 = mutableListOf<String>()
     var text2 = mutableListOf<String>()
-    File(args[0]).useLines {lines -> lines.forEach{text1.add(it)
+    File("file1.txt").useLines {lines -> lines.forEach{text1.add(it)
         n++}}
-    File(args[1]).useLines {lines -> lines.forEach{text2.add(it)
+    File("file2.txt").useLines {lines -> lines.forEach{text2.add(it)
     m++}}
     diff(n, m, text1, text2)
 }
