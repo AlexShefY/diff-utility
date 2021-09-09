@@ -10,36 +10,47 @@ val alph : Int = 28
  * хэшей считать не будем, но использование двух хэшей сильно снизит вероятность коллизий по сравнению
  * с использованием одного).
  */
+
+/*
+ * Функция, считающая хэши для одной строки
+ */
+fun hash_one_string(s1 : String) : Array <Long>{
+    var hash1 : Long = 0
+    var hash2 : Long = 0
+    for(j in 0 until s1.length) {
+        hash1 = (hash1 * alph + (s1[j]).toInt() - ('a').toInt() + 1) % mod1
+        hash2 = (hash2 * alph + (s1[j]).toInt() - ('a').toInt() + 1) % mod2
+    }
+    return arrayOf(hash1, hash2)
+}
+/*
+ * Функция, подсчитывающая хэши для набора строк
+ */
 fun hashes(n : Int, s1 : List <String>) : Array<Array<Long>>{
     var hashof : Array<Array<Long>> = Array(n) {Array (2) {0} }
     for(i in 0 until n){
-        var hash1 : Long = 0
-        var hash2 : Long = 0
-        for(j in 0 until s1[i].length) {
-            hash1 = (hash1 * alph + (s1[i][j]).toInt() - ('a').toInt() + 1) % mod1
-            hash2 = (hash2 * alph + (s1[i][j]).toInt() - ('a').toInt() + 1) % mod2
-        }
-        hashof[i][0] = hash1
-        hashof[i][1] = hash2
+        hashof[i] = hash_one_string(s1[i])
     }
     return hashof
 }
 
 
-fun diff(n : Int, m : Int, text1 : List<String>, text2 : List<String>){
-    var first : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} }
-    var second : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} } // first[i][j] и second[i][j] служат для восстановления ответа и
-    // хранят певрый и второй элемент пары (i1, j1), i1 <= i, j1 <= j, такие что s[i1] = s[j1] и s[i1] - последний элемент, ходящий в
-    // наибольшую общую подпоследовательно для префиксов (i, j)
-    var dp : Array<Array<Int>> = Array (n + 1) {Array <Int>(m + 1){0} } // dp[i][j] хранит длину наибольшей общей подпоследовательности для префиксов i и j
-    var hashfirst = hashes(n, text1) // подсчитываем хэши для первого текста
-    var hashsecond = hashes(m, text2) // подсчитываем хэши для второго текста
+/*
+ * Отдельная функция для подсчета массивов, предназначенных для восстановления наибольшей общей подпоследовательности
+ */
+fun calc_dp(n : Int, m : Int, hashfirst : Array<Array<Long>>, hashsecond : Array<Array<Long>>) : Array<Array<Array<Int> > >{
     /*
      * Функция equals сравнивает две строки сравнением хэшей, насчитанных по этим строкам.
      */
     fun equals(i : Int, j : Int) : Boolean{
         return hashfirst[i][0] == hashsecond[j][0] && hashfirst[i][1] == hashsecond[j][1]
     }
+    var first : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} }
+    var second : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} } // first[i][j] и second[i][j] служат для восстановления ответа и
+    // хранят певрый и второй элемент пары (i1, j1), i1 <= i, j1 <= j, такие что s[i1] = s[j1] и s[i1] - последний элемент, ходящий в
+    // наибольшую общую подпоследовательно для префиксов (i, j)
+    var dp : Array<Array<Int>> = Array (n + 1) {Array <Int>(m + 1){0} } // dp[i][j] хранит длину наибольшей общей подпоследовательности для префиксов i и j
+
     for(i in 0..n){
         for(j in 0..m){
             if(i != 0 && j != 0 && equals(i - 1, j - 1) && dp[i][j] < dp[i - 1][j - 1] + 1){
@@ -59,6 +70,17 @@ fun diff(n : Int, m : Int, text1 : List<String>, text2 : List<String>){
             }
         }
     }
+    print(dp[n][m])
+    return arrayOf(first, second)
+}
+fun diff(n : Int, m : Int, text1 : List<String>, text2 : List<String>){
+    var hashfirst = hashes(n, text1) // подсчитываем хэши для первого текста
+    var hashsecond = hashes(m, text2) // подсчитываем хэши для второго текста
+    var first : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} }
+    var second : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} } // first[i][j] и second[i][j] служат для восстановления ответа и
+    var cur = calc_dp(n, m, hashfirst, hashsecond)
+    first = cur[0]
+    second = cur[1]
 
 }
 
