@@ -1,3 +1,5 @@
+import java.io.File
+
 val mod1 : Int = 998244353
 val mod2 : Int = (1e9).toInt() + 7
 val alph : Int = 28
@@ -8,7 +10,7 @@ val alph : Int = 28
  * хэшей считать не будем, но использование двух хэшей сильно снизит вероятность коллизий по сравнению
  * с использованием одного).
  */
-fun hashes(n : Int, s1 : Array <String>) : Array<Array<Long>>{
+fun hashes(n : Int, s1 : List <String>) : Array<Array<Long>>{
     var hashof : Array<Array<Long>> = Array(n) {Array (2) {0} }
     for(i in 0 until n){
         var hash1 : Long = 0
@@ -24,12 +26,14 @@ fun hashes(n : Int, s1 : Array <String>) : Array<Array<Long>>{
 }
 
 
-fun diff(n : Int, m : Int, s1 : Array<String>, s2 : Array<String>){
+fun diff(n : Int, m : Int, text1 : List<String>, text2 : List<String>){
     var first : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} }
-    var second : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} }
-    var dp : Array<Array<Int>> = Array (n + 1) {Array <Int>(m + 1){0} }
-    var hashfirst = hashes(n, s1)
-    var hashsecond = hashes(m, s2)
+    var second : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} } // first[i][j] и second[i][j] служат для восстановления ответа и
+    // хранят певрый и второй элемент пары (i1, j1), i1 <= i, j1 <= j, такие что s[i1] = s[j1] и s[i1] - последний элемент, ходящий в
+    // наибольшую общую подпоследовательно для префиксов (i, j)
+    var dp : Array<Array<Int>> = Array (n + 1) {Array <Int>(m + 1){0} } // dp[i][j] хранит длину наибольшей общей подпоследовательности для префиксов i и j
+    var hashfirst = hashes(n, text1) // подсчитываем хэши для первого текста
+    var hashsecond = hashes(m, text2) // подсчитываем хэши для второго текста
     /*
      * Функция equals сравнивает две строки сравнением хэшей, насчитанных по этим строкам.
      */
@@ -55,19 +59,20 @@ fun diff(n : Int, m : Int, s1 : Array<String>, s2 : Array<String>){
             }
         }
     }
-   // println(dp[n][m])
+    println(dp[n][m])
 }
-fun main(args: Array<String>) {
-    var n : Int = (readLine()!!).toInt()
-    val s1 : Array<String> = Array(n){""}
-    for(i in 0 until n){
-        s1[i] = readLine()!!
-    }
-    var m : Int = (readLine()!!).toInt()
-    val s2 : Array<String> = Array(m){""}
-    for(i in 0 until m) {
-        s2[i] = readLine()!!
-    }
-    diff(n, m, s1, s2)
 
+/*
+ * В функции main я считываю содержимое двух файлов в text1 и text2 и вызываю функцию diff.
+ */
+fun main(args: Array<String>) {
+    var n : Int = 0
+    var m : Int = 0
+    var text1 = mutableListOf<String>()
+    var text2 = mutableListOf<String>()
+    File(args[0]).useLines {lines -> lines.forEach{text1.add(it)
+        n++}}
+    File(args[1]).useLines {lines -> lines.forEach{text2.add(it)
+    m++}}
+    diff(n, m, text1, text2)
 }
