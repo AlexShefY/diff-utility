@@ -157,15 +157,35 @@ fun diff(data_input : for_input){
 /*
  * В следующей функции я считываю содержимое файлов.
  */
-fun input_(args : Array <String>) : for_input{
+fun input_(args : Array <String>) : for_input?{
     var n : Int = 0
     var m : Int = 0
     var text1 = mutableListOf<String>()
     var text2 = mutableListOf<String>()
-    File(args[0]).useLines {lines -> lines.forEach{text1.add(it)
-        n++}}
-    File(args[1]).useLines {lines -> lines.forEach{text2.add(it)
-        m++}}
+    try {
+        File(args[0]).useLines { lines ->
+            lines.forEach {
+                text1.add(it)
+                n++
+            }
+        }
+    }
+    catch(e: Exception){
+        println("Wrong name of file: ${args[0]}")
+        return null
+    }
+    try {
+        File(args[1]).useLines { lines ->
+            lines.forEach {
+                text2.add(it)
+                m++
+            }
+        }
+    }
+    catch(e: Exception){
+        println("Wrong name of file: ${args[1]}")
+        return null
+    }
     return for_input(n, m, text1, text2)
 }
 /*
@@ -177,6 +197,9 @@ fun input_(args : Array <String>) : for_input{
 
 fun dp_value(args : Array <String>) : Int{
     var data_input = input_(args)
+    if(data_input == null){
+        return -1
+    }
     var hashfirst = hashes(data_input.n, data_input.text1) // подсчитываем хэши для первого текста
     var hashsecond = hashes(data_input.m, data_input.text2) // подсчитываем хэши для второго текста
     var first : Array<Array<Int>>
@@ -184,7 +207,24 @@ fun dp_value(args : Array <String>) : Int{
     var cur = calc_dp(data_input.n, data_input.m, hashfirst, hashsecond)
     return cur[data_input.n][data_input.m].value
 }
+/*
+ * В функции main проверяем входные данный на правильность
+ */
 fun main(args: Array<String>) {
-    var data_input = input_(args)
-    diff(data_input)
+    if(args.size > 2){
+        println("You need to enter two files")
+    }
+    else if(args.size == 1){
+        println("You need to enter two files")
+    }
+    else if(args.size == 0){
+        println("Please, enter the command")
+
+    }
+    else {
+        var data_input = input_(args)
+        if(data_input != null){
+            diff(data_input)
+        }
+    }
 }
