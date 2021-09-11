@@ -21,10 +21,9 @@ internal class Test1 {
 
     @Test
     fun test1() {
-       // System.setIn(ByteArrayInputStream("file1.txt".toByteArray())
         assertEquals(16, dp_value(arrayOf("file1.txt", "file2.txt")))
-       // main(arrayOf())
-        //assert("file1.txt" == stream.toString().trim().lines().last())
+        assertEquals(7, dp_value(arrayOf("file3.txt", "file4.txt")))
+        assertEquals(16, dp_value(arrayOf("file5.txt", "file6.txt")))
     }
 
     @Test

@@ -81,6 +81,7 @@ fun calc_dp(n : Int, m : Int, hashfirst : Array<Array<Long>>, hashsecond : Array
             }
         }
     }
+    println(dp[n][m].value)
     return dp
 }
 
@@ -92,14 +93,16 @@ val RED : String = "\u001B[31m";
 var GREEN : String = "\u001B[32m";
 
 
-/*
- * Восстанавливает ответ по динамике. Выводит построчно добавленные, неизмененные и удаленные строки
- */
 
 /*
  * Следующий класс предназначен для хранения входных данных
  */
 data class for_input(var n : Int, var m : Int, var text1 : List<String>, var text2 : List<String>)
+
+
+/*
+ * Восстанавливает ответ по динамике. Выводит построчно добавленные, неизмененные и удаленные строки
+ */
 fun print_answer(data_input : for_input, dp : Array<Array<elem>>){
     var answer = mutableListOf<String>()
     var i = data_input.n
