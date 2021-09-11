@@ -95,10 +95,15 @@ var GREEN : String = "\u001B[32m";
 /*
  * Восстанавливает ответ по динамике. Выводит построчно добавленные, неизмененные и удаленные строки
  */
-fun print_answer(n : Int, m : Int, text1 : List<String>, text2 : List<String>, dp : Array<Array<elem>>){
+
+/*
+ * Следующий класс предназначен для хранения входных данных
+ */
+data class for_input(var n : Int, var m : Int, var text1 : List<String>, var text2 : List<String>)
+fun print_answer(data_input : for_input, dp : Array<Array<elem>>){
     var answer = mutableListOf<String>()
-    var i = n
-    var j = m
+    var i = data_input.n
+    var j = data_input.m
     var _size = 0
     while(i > 0 || j > 0){
         var i1 = dp[i][j].i_pred
@@ -106,18 +111,18 @@ fun print_answer(n : Int, m : Int, text1 : List<String>, text2 : List<String>, d
         var t = j
         while(t > j1){
             _size++
-            answer.add("+${text2[t - 1]}")
+            answer.add("+${data_input.text2[t - 1]}")
             t--
         }
         t = i
         while(t > i1) {
             _size++
-            answer.add("-${text1[t - 1]}")
+            answer.add("-${data_input.text1[t - 1]}")
             t--
         }
         if(i1 != 0) {
             _size++
-            answer.add("=${text1[i1 - 1]}")
+            answer.add("=${data_input.text1[i1 - 1]}")
         }
         i = i1 - 1
         j = j1 - 1
@@ -137,26 +142,45 @@ fun print_answer(n : Int, m : Int, text1 : List<String>, text2 : List<String>, d
     }
 }
 
-fun diff(n : Int, m : Int, text1 : List<String>, text2 : List<String>){
-    var hashfirst = hashes(n, text1) // подсчитываем хэши для первого текста
-    var hashsecond = hashes(m, text2) // подсчитываем хэши для второго текста
+fun diff(data_input : for_input){
+    var hashfirst = hashes(data_input.n, data_input.text1) // подсчитываем хэши для первого текста
+    var hashsecond = hashes(data_input.m, data_input.text2) // подсчитываем хэши для второго текста
     var first : Array<Array<Int>>
     var second : Array<Array<Int>>// first[i][j] и second[i][j] служат для восстановления ответа и
-    var cur = calc_dp(n, m, hashfirst, hashsecond)
-    print_answer(n, m, text1, text2, cur)
+    var cur = calc_dp(data_input.n, data_input.m, hashfirst, hashsecond)
+    print_answer(data_input, cur)
 }
 
 /*
- * В функции main я считываю содержимое двух файлов в text1 и text2 и вызываю функцию diff.
+ * В следующей функции я считываю содержимое файлов.
  */
-fun main(args: Array<String>) {
+fun input_(args : Array <String>) : for_input{
     var n : Int = 0
     var m : Int = 0
     var text1 = mutableListOf<String>()
     var text2 = mutableListOf<String>()
-    File("file1.txt").useLines {lines -> lines.forEach{text1.add(it)
+    File(args[0]).useLines {lines -> lines.forEach{text1.add(it)
         n++}}
-    File("file2.txt").useLines {lines -> lines.forEach{text2.add(it)
-    m++}}
-    diff(n, m, text1, text2)
+    File(args[1]).useLines {lines -> lines.forEach{text2.add(it)
+        m++}}
+    return for_input(n, m, text1, text2)
+}
+/*
+ * Функция, созданная для проверки корректности работы прогрмаммы.
+ * Она возвращает длину наибольшей общей подпоследовательности.
+ * И в тестах мы уже проверяем найденную длину наибольшей подпоследовательности с корректной.
+ */
+
+fun dp_value(args : Array <String>) : Int{
+    var data_input = input_(args)
+    var hashfirst = hashes(data_input.n, data_input.text1) // подсчитываем хэши для первого текста
+    var hashsecond = hashes(data_input.m, data_input.text2) // подсчитываем хэши для второго текста
+    var first : Array<Array<Int>>
+    var second : Array<Array<Int>>// first[i][j] и second[i][j] служат для восстановления ответа и
+    var cur = calc_dp(data_input.n, data_input.m, hashfirst, hashsecond)
+    return cur[data_input.n][data_input.m].value
+}
+fun main(args: Array<String>) {
+    var data_input = input_(args)
+    diff(data_input)
 }
