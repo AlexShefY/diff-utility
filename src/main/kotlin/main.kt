@@ -174,6 +174,7 @@ fun input_(args : Array <String>) : for_input{
  * И в тестах мы уже проверяем найденную длину наибольшей подпоследовательности с корректной.
  */
 
+
 fun dp_value(args : Array <String>) : Int{
     var data_input = input_(args)
     var hashfirst = hashes(data_input.n, data_input.text1) // подсчитываем хэши для первого текста
