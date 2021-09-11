@@ -49,43 +49,39 @@ fun check_hashes_equals(a : Array<Long>, b : Array<Long>) : Boolean
     }
     return true
 }
-
+// Класс предназначенный для хранения значения динамики и данных, необходимых для восстановления ответа.
+data class elem(var value : Int, var i_pred : Int, var j_pred : Int)
 /*
  * Отдельная функция для подсчета массивов, предназначенных для восстановления наибольшей общей подпоследовательности
  */
-fun calc_dp(n : Int, m : Int, hashfirst : Array<Array<Long>>, hashsecond : Array<Array<Long>>) : Array<Array<Array<Int> > >{
+fun calc_dp(n : Int, m : Int, hashfirst : Array<Array<Long>>, hashsecond : Array<Array<Long>>) : Array<Array<elem> >{
     /*
      * Функция equals сравнивает две строки сравнением хэшей, насчитанных по этим строкам.
      */
     fun equals(i : Int, j : Int) : Boolean{
         return check_hashes_equals(hashfirst[i], hashsecond[j])
     }
-    var first : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} }
-    var second : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} } // first[i][j] и second[i][j] служат для восстановления ответа и
-    // хранят певрый и второй элемент пары (i1, j1), i1 <= i, j1 <= j, такие что s[i1] = s[j1] и s[i1] - последний элемент, ходящий в
-    // наибольшую общую подпоследовательно для префиксов (i, j)
-    var dp : Array<Array<Int>> = Array (n + 1) {Array <Int>(m + 1){0} } // dp[i][j] хранит длину наибольшей общей подпоследовательности для префиксов i и j
-
+    var dp : Array<Array<elem>> = Array(n + 1){Array<elem> (m + 1){elem(0, 0, 0)} }
     for(i in 0..n){
         for(j in 0..m){
-            if(i != 0 && j != 0 && equals(i - 1, j - 1) && dp[i][j] < dp[i - 1][j - 1] + 1){
-                dp[i][j] = dp[i - 1][j - 1] + 1
-                first[i][j] = i
-                second[i][j] = j
+            if(i != 0 && j != 0 && equals(i - 1, j - 1) && dp[i][j].value < dp[i - 1][j - 1].value + 1){
+                dp[i][j].value = dp[i - 1][j - 1].value + 1
+                dp[i][j].i_pred = i
+                dp[i][j].j_pred = j
             }
-            if(i != 0 && dp[i - 1][j] > dp[i][j]){
-                dp[i][j] = dp[i - 1][j]
-                first[i][j] = first[i - 1][j]
-                second[i][j] = second[i - 1][j]
+            if(i != 0 && dp[i - 1][j].value > dp[i][j].value){
+                dp[i][j].value = dp[i - 1][j].value
+                dp[i][j].i_pred = dp[i - 1][j].i_pred
+                dp[i][j].j_pred = dp[i - 1][j].j_pred
             }
-            if(j != 0 && dp[i][j - 1] > dp[i][j]){
-                dp[i][j] = dp[i][j - 1]
-                first[i][j] = first[i][j - 1]
-                second[i][j] = second[i][j - 1]
+            if(j != 0 && dp[i][j - 1].value > dp[i][j].value){
+                dp[i][j].value = dp[i][j - 1].value
+                dp[i][j].i_pred = dp[i][j - 1].i_pred
+                dp[i][j].j_pred = dp[i][j - 1].j_pred
             }
         }
     }
-    return arrayOf(first, second)
+    return dp
 }
 
 /*
@@ -99,15 +95,14 @@ var GREEN : String = "\u001B[32m";
 /*
  * Восстанавливает ответ по динамике. Выводит построчно добавленные, неизмененные и удаленные строки
  */
-fun print_answer(n : Int, m : Int, text1 : List<String>, text2 : List<String>, first : Array<Array<Int>>, second : Array<Array<Int>>){
+fun print_answer(n : Int, m : Int, text1 : List<String>, text2 : List<String>, dp : Array<Array<elem>>){
     var answer = mutableListOf<String>()
     var i = n
     var j = m
     var _size = 0
     while(i > 0 || j > 0){
-        println("$i $j")
-        var i1 = first[i][j]
-        var j1 = second[i][j]
+        var i1 = dp[i][j].i_pred
+        var j1 = dp[i][j].j_pred
         var t = j
         while(t > j1){
             _size++
@@ -145,12 +140,10 @@ fun print_answer(n : Int, m : Int, text1 : List<String>, text2 : List<String>, f
 fun diff(n : Int, m : Int, text1 : List<String>, text2 : List<String>){
     var hashfirst = hashes(n, text1) // подсчитываем хэши для первого текста
     var hashsecond = hashes(m, text2) // подсчитываем хэши для второго текста
-    var first : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} }
-    var second : Array<Array<Int>> = Array  (n + 1) {Array <Int>(m + 1){0} } // first[i][j] и second[i][j] служат для восстановления ответа и
+    var first : Array<Array<Int>>
+    var second : Array<Array<Int>>// first[i][j] и second[i][j] служат для восстановления ответа и
     var cur = calc_dp(n, m, hashfirst, hashsecond)
-    first = cur[0]
-    second = cur[1]
-    print_answer(n, m, text1, text2, first, second)
+    print_answer(n, m, text1, text2, cur)
 }
 
 /*

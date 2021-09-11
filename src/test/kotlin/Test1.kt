@@ -21,9 +21,11 @@ internal class Test1 {
 
     @Test
     fun test1() {
-        main(arrayOf("file1.txt", "file2.txt"))
-        assertEquals("16", stream.toString().trim())
-        //assert(true)
+       // System.setIn(ByteArrayInputStream("file1.txt".toByteArray()))
+   //     main(arrayOf("file1.txt", "file2.txt"))
+     //   assertEquals("16", stream.toString().trim())
+       // main(arrayOf())
+        //assert("file1.txt" == stream.toString().trim().lines().last())
     }
 
     @Test
