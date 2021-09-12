@@ -10,7 +10,7 @@ val alph : Int = 1200
 
 /*
  * Захэшруем строки из наборов, чтобы можно было быстро проверять их на равентсво.
- * Вместо самих строк на равенство будем сравнивать по два хэша, вычисленных по разным модулям (много
+ * Вместо самих строк на равенство будем сравнивать по четыре хэша, вычисленных по разным модулям (много
  * хэшей считать не будем, но использование двух хэшей сильно снизит вероятность коллизий по сравнению
  * с использованием одного).
  */
@@ -81,7 +81,6 @@ fun calc_dp(n : Int, m : Int, hashfirst : Array<Array<Long>>, hashsecond : Array
             }
         }
     }
-    println(dp[n][m].value)
     return dp
 }
 
@@ -133,10 +132,10 @@ fun print_answer(data_input : for_input, dp : Array<Array<elem>>){
     while(_size > 0){
         _size--
         if(answer[_size][0] == '+'){
-            println(GREEN + "${answer[_size]}" + RESET);
+            println("GREEN+${answer[_size]}+RESET");
         }
         else if(answer[_size][0] == '-'){
-            println(RED + "${answer[_size]}" + RESET);
+            println("RED+${answer[_size]}+RESET");
         }
         else
         {
