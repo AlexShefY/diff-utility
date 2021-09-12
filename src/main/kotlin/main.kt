@@ -1,12 +1,13 @@
 import java.io.File
+import kotlin.math.min
 
 /*
  * Модули для подсчета хэшей
  */
-val mod1 : Int = 998244353
-val mod2 : Int = (1e9).toInt() + 7
-val mod = arrayOf(998244353, (1e9).toInt() + 7, 16769023, 1073676287)
-val alph : Int = 1200
+val mod1 : Long = 998244353
+val mod2 : Long = (1e9).toLong() + 7
+val mod = arrayOf(998244353L, (1e9).toLong() + 7, 16769023L, 1073676287L)
+val alph : Long = 10000
 
 /*
  * Захэшруем строки из наборов, чтобы можно было быстро проверять их на равентсво.
@@ -31,7 +32,7 @@ fun hash_one_string(s1 : String) : Array <Long>{
  * Функция, подсчитывающая хэши для набора строк
  */
 fun hashes(n : Int, s1 : List <String>) : Array<Array<Long>>{
-    var hashof : Array<Array<Long>> = Array(n) {Array (4) {0} }
+    var hashof : Array<Array<Long>> = Array(n) {Array (4) {0L} }
     for(i in 0 until n){
         hashof[i] = hash_one_string(s1[i])
     }
@@ -49,6 +50,13 @@ fun check_hashes_equals(a : Array<Long>, b : Array<Long>) : Boolean
     }
     return true
 }
+
+/*
+ * Следующий класс предназначен для хранения входных данных
+ */
+data class for_input(var n : Int, var m : Int, var text1 : List<String>, var text2 : List<String>)
+
+
 // Класс предназначенный для хранения значения динамики и данных, необходимых для восстановления ответа.
 data class elem(var value : Int, var i_pred : Int, var j_pred : Int)
 /*
@@ -61,7 +69,8 @@ fun calc_dp(n : Int, m : Int, hashfirst : Array<Array<Long>>, hashsecond : Array
     fun equals(i : Int, j : Int) : Boolean{
         return check_hashes_equals(hashfirst[i], hashsecond[j])
     }
-    var dp : Array<Array<elem>> = Array(n + 1){Array<elem> (m + 1){elem(0, 0, 0)} }
+    var dp : Array<Array<elem>> = Array(n + 1){Array<elem> (m + 1){elem(-1, 0, 0)} }
+    dp[0][0] = elem(0, 0, 0)
     for(i in 0..n){
         for(j in 0..m){
             if(i != 0 && j != 0 && equals(i - 1, j - 1) && dp[i][j].value < dp[i - 1][j - 1].value + 1){
@@ -92,11 +101,6 @@ val RED : String = "\u001B[31m";
 var GREEN : String = "\u001B[32m";
 
 
-
-/*
- * Следующий класс предназначен для хранения входных данных
- */
-data class for_input(var n : Int, var m : Int, var text1 : List<String>, var text2 : List<String>)
 
 
 /*
@@ -129,10 +133,12 @@ fun print_answer(data_input : for_input, dp : Array<Array<elem>>){
         i = i1 - 1
         j = j1 - 1
     }
+    var it = 0
     while(_size > 0){
         _size--
         if(answer[_size][0] == '+'){
             println("GREEN+${answer[_size]}+RESET");
+            it++
         }
         else if(answer[_size][0] == '-'){
             println("RED+${answer[_size]}+RESET");
@@ -140,6 +146,7 @@ fun print_answer(data_input : for_input, dp : Array<Array<elem>>){
         else
         {
             println("${answer[_size]}");
+            it++
         }
     }
 }
@@ -147,8 +154,6 @@ fun print_answer(data_input : for_input, dp : Array<Array<elem>>){
 fun diff(data_input : for_input){
     var hashfirst = hashes(data_input.n, data_input.text1) // подсчитываем хэши для первого текста
     var hashsecond = hashes(data_input.m, data_input.text2) // подсчитываем хэши для второго текста
-    var first : Array<Array<Int>>
-    var second : Array<Array<Int>>// first[i][j] и second[i][j] служат для восстановления ответа и
     var cur = calc_dp(data_input.n, data_input.m, hashfirst, hashsecond)
     print_answer(data_input, cur)
 }
