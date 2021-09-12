@@ -19,11 +19,28 @@ val alph : Long = 10000
 /*
  * Функция, считающая хэши для одной строки
  */
-fun hash_one_string(s1 : String) : Array <Long>{
+var mass1 = setOf('!', ':', ';', ',', '.', '-')
+var mass2 = setOf(':', ';', ',', '-')
+fun hash_one_string(s1 : String, flag : Int) : Array <Long>{
     var hash = Array<Long>(4){0L}
     for(j in 0 until s1.length) {
         for(k in 0..3){
-            hash[k] = (hash[k] * alph + (s1[j]).toInt() + 1) % mod[k]
+            if(flag == 0 || flag == 2) {
+                hash[k] = (hash[k] * alph + (s1[j]).toInt() + 1) % mod[k]
+            }
+            else if(flag == 1)
+            {
+                var t : Char = s1[j]
+                if(t.isUpperCase()){
+                    t = t.toLowerCase()
+                }
+                hash[k] = (hash[k] * alph + t.toInt() + 1) % mod[k]
+            }
+            else{
+                if(s1[j] !in mass2){
+                    hash[k] = (hash[k] * alph + (s1[j]).toInt() + 1) % mod[k]
+                }
+            }
         }
     }
     return hash
@@ -31,10 +48,10 @@ fun hash_one_string(s1 : String) : Array <Long>{
 /*
  * Функция, подсчитывающая хэши для набора строк
  */
-fun hashes(n : Int, s1 : List <String>) : Array<Array<Long>>{
+fun hashes(n : Int, s1 : List <String>, flag : Int) : Array<Array<Long>>{
     var hashof : Array<Array<Long>> = Array(n) {Array (4) {0L} }
     for(i in 0 until n){
-        hashof[i] = hash_one_string(s1[i])
+        hashof[i] = hash_one_string(s1[i], flag)
     }
     return hashof
 }
@@ -137,31 +154,62 @@ fun print_answer(data_input : for_input, dp : Array<Array<elem>>){
     while(_size > 0){
         _size--
         if(answer[_size][0] == '+'){
-            println("GREEN+${answer[_size]}+RESET");
+            println(GREEN+answer[_size]+RESET);
             it++
         }
         else if(answer[_size][0] == '-'){
-            println("RED+${answer[_size]}+RESET");
+            println(RED+answer[_size]+RESET);
         }
         else
         {
-            println("${answer[_size]}");
+            println(answer[_size]);
             it++
         }
     }
 }
 
-fun diff(data_input : for_input){
-    var hashfirst = hashes(data_input.n, data_input.text1) // подсчитываем хэши для первого текста
-    var hashsecond = hashes(data_input.m, data_input.text2) // подсчитываем хэши для второго текста
+fun diff(data_input : for_input, flag : Int){
+    var hashfirst = hashes(data_input.n, data_input.text1, flag) // подсчитываем хэши для первого текста
+    var hashsecond = hashes(data_input.m, data_input.text2, flag) // подсчитываем хэши для второго текста
     var cur = calc_dp(data_input.n, data_input.m, hashfirst, hashsecond)
     print_answer(data_input, cur)
 }
 
+
+fun funct(s : String) : String{
+    var flag : Boolean = false
+    var s1 : String = ""
+    var s_list = mutableListOf<Char>()
+    for(j in 0..(s.length-1)){
+        if(s[j] != ' '){
+            if(!flag && s_list.size > 0 && s[j] !in mass1){
+                s_list.add(' ')
+            }
+            else if(flag && s_list.last() in mass1){
+                s_list.add(' ')
+            }
+            flag = true
+        }
+        else{
+            flag = false
+        }
+        if(flag){
+            s_list.add(s[j])
+        }
+    }
+    while(s_list.size > 0 && s_list.last() == ' ')
+    {
+        s_list.removeLast()
+    }
+    for(c in s_list){
+        s1 += c
+    }
+    return s1
+}
 /*
  * В следующей функции я считываю содержимое файлов.
  */
-fun input_(args : Array <String>) : for_input?{
+fun input_(args : Array <String>, flag : Int) : for_input?{
     var n : Int = 0
     var m : Int = 0
     var text1 = mutableListOf<String>()
@@ -190,6 +238,18 @@ fun input_(args : Array <String>) : for_input?{
         println("Wrong name of file: ${args[1]}")
         return null
     }
+    if(flag == 2){
+        var new_text1 = mutableListOf<String>()
+        var new_text2 = mutableListOf<String>()
+        for(lines in text1){
+            new_text1.add(funct(lines))
+        }
+        for(lines in text2){
+            new_text2.add(funct(lines))
+        }
+        text1 = new_text1
+        text2 = new_text2
+    }
     return for_input(n, m, text1, text2)
 }
 /*
@@ -199,13 +259,13 @@ fun input_(args : Array <String>) : for_input?{
  */
 
 
-fun dp_value(args : Array <String>) : Int{
-    var data_input = input_(args)
+fun dp_value(args : Array <String>, flag : Int) : Int{
+    var data_input = input_(args, flag)
     if(data_input == null){
         return -1
     }
-    var hashfirst = hashes(data_input.n, data_input.text1) // подсчитываем хэши для первого текста
-    var hashsecond = hashes(data_input.m, data_input.text2) // подсчитываем хэши для второго текста
+    var hashfirst = hashes(data_input.n, data_input.text1, flag) // подсчитываем хэши для первого текста
+    var hashsecond = hashes(data_input.m, data_input.text2, flag) // подсчитываем хэши для второго текста
     var first : Array<Array<Int>>
     var second : Array<Array<Int>>// first[i][j] и second[i][j] служат для восстановления ответа и
     var cur = calc_dp(data_input.n, data_input.m, hashfirst, hashsecond)
@@ -215,20 +275,24 @@ fun dp_value(args : Array <String>) : Int{
  * В функции main проверяем входные данный на правильность
  */
 fun main(args: Array<String>) {
-    if(args.size > 2){
-        println("You need to enter two files")
-    }
-    else if(args.size == 1){
-        println("You need to enter two files")
-    }
-    else if(args.size == 0){
+    var Arr : Array<String> = arrayOf("-s", "-lu", "-sp", "-p")
+    if(args.size != 3 || !(args[0] in Arr)){
         println("Please, enter the command")
-
+        println("-s  -- print the output of diff on input data")
+        println("-lu  -- do not distinguish between lowercase and uppercase letters")
+        println("-sp -- delete extra spaces")
+        println("-p -- ignore punctuation marks such as ',', '-', ':', ';'")
     }
     else {
-        var data_input = input_(args)
+        var flag = when(args[0]){
+            Arr[0] -> 0
+            Arr[1] -> 1
+            Arr[2] -> 2
+            else -> 3
+        }
+        var data_input = input_(arrayOf(args[1], args[2]), flag)
         if(data_input != null){
-            diff(data_input)
+            diff(data_input, flag)
         }
     }
 }

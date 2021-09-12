@@ -39,18 +39,8 @@ internal class Test1 {
             }
             var s1 : String = ""
             var t : Int = 0
-            while(t < lines.length && lines[t] != '+' && lines[t] != '='){
-                t++
-            }
-            if(lines[t] == '+'){
-                t++
-            }
-            var t1  = t + 1
-            while(t1 < lines.length && lines[t1] != '+') {
-                t1++
-            }
-            if(t + 1 < t1) {
-                for (p in (t + 1) until t1) {
+            if(t + 1 < lines.length) {
+                for (p in (t + 1) until lines.length) {
                     s1 += lines[p]
                 }
             }
@@ -94,9 +84,9 @@ internal class Test1 {
 
     @Test
     fun test1() {
-        assertEquals(16, dp_value(arrayOf("file1.txt", "file2.txt")))
-        assertEquals(7, dp_value(arrayOf("file3.txt", "file4.txt")))
-        assertEquals(16, dp_value(arrayOf("file5.txt", "file6.txt")))
+        assertEquals(16, dp_value(arrayOf("file1.txt", "file2.txt"), 0))
+        assertEquals(7, dp_value(arrayOf("file3.txt", "file4.txt"), 0))
+        assertEquals(16, dp_value(arrayOf("file5.txt", "file6.txt"), 0))
     }
 
     @Test
@@ -174,12 +164,12 @@ internal class Test1 {
     }
     @Test
     fun test_hashes(){
-        assert(!check_hashes_equals(hash_one_string("a"), hash_one_string("b")))
-        assert(check_hashes_equals(hash_one_string("akhdkajdhshkfjd"), hash_one_string("akhdkajdhshkfjd")))
-        assert(!check_hashes_equals(hash_one_string("aab"), hash_one_string("baa")))
-        assert(!check_hashes_equals(hash_one_string("abc\n"), hash_one_string("abc")))
-        assert(!check_hashes_equals(hash_one_string("abc "), hash_one_string("abc")))
-        assert(check_hashes_equals(hash_one_string("объёма информации."), hash_one_string("объёма информации.")))
-        assert(!check_hashes_equals(hash_one_string("Это важное замечание!"), hash_one_string("Это важное\\замечание!")))
+        assert(!check_hashes_equals(hash_one_string("a", 0), hash_one_string("b", 0)))
+        assert(check_hashes_equals(hash_one_string("akhdkajdhshkfjd", 0), hash_one_string("akhdkajdhshkfjd", 0)))
+        assert(!check_hashes_equals(hash_one_string("aab", 0), hash_one_string("baa", 0)))
+        assert(!check_hashes_equals(hash_one_string("abc\n", 0), hash_one_string("abc", 0)))
+        assert(!check_hashes_equals(hash_one_string("abc ", 0), hash_one_string("abc", 0)))
+        assert(check_hashes_equals(hash_one_string("объёма информации.", 0), hash_one_string("объёма информации.", 0)))
+        assert(!check_hashes_equals(hash_one_string("Это важное замечание!", 0), hash_one_string("Это важное\\замечание!", 0)))
     }
 }
