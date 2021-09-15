@@ -97,9 +97,9 @@ internal class Test1 {
 
         @Test
         fun test1() {
-            assertEquals(16, dp_value(arrayOf("file1.txt", "file2.txt"), 0))
-            assertEquals(7, dp_value(arrayOf("file3.txt", "file4.txt"), 0))
-            assertEquals(16, dp_value(arrayOf("file5.txt", "file6.txt"), 0))
+            assertEquals(16, dpValue(arrayOf("file1.txt", "file2.txt"), 0))
+            assertEquals(7, dpValue(arrayOf("file3.txt", "file4.txt"), 0))
+            assertEquals(16, dpValue(arrayOf("file5.txt", "file6.txt"), 0))
         }
         @Test
         fun test2() {
@@ -146,20 +146,20 @@ internal class Test1 {
                 var m_add = (0..m).random()
                 while(m_add > 0 && text_add.size > 0){
                     var idx1 = (0..text2.size).random()
-                    var idx2 = (0..(text_add.size - 1)).random()
+                    var idx2 = (text_add.indices).random()
                     text2.add(idx1, text_add[idx2])
                     m_add--
                 }
                 var m_del = min(text2.size, m)
                 m_del = (0..m_del).random()
                 while(m_del > 0){
-                    text2.removeAt((0..(text2.size - 1)).random())
+                    text2.removeAt((text2.indices).random())
                     m_del--
                 }
                 var m_swap = (0..m).random()
                 while(m_swap > 0 && text2.size > 0){
-                    var idx1 = (0..(text2.size - 1)).random()
-                    var idx2 = (0..(text2.size - 1)).random()
+                    var idx1 = (text2.indices).random()
+                    var idx2 = (text2.indices).random()
                     var c = text2[idx2]
                     text2[idx2] = text2[idx1]
                     text2[idx1] = c
@@ -181,12 +181,12 @@ internal class Test1 {
         }
         @Test
         fun test_hashes(){
-            assert(!check_hashes_equals(hash_one_string("a", 0), hash_one_string("b", 0)))
-            assert(check_hashes_equals(hash_one_string("akhdkajdhshkfjd", 0), hash_one_string("akhdkajdhshkfjd", 0)))
-            assert(!check_hashes_equals(hash_one_string("aab", 0), hash_one_string("baa", 0)))
-            assert(!check_hashes_equals(hash_one_string("abc\n", 0), hash_one_string("abc", 0)))
-            assert(!check_hashes_equals(hash_one_string("abc ", 0), hash_one_string("abc", 0)))
-            assert(check_hashes_equals(hash_one_string("объёма информации.", 0), hash_one_string("объёма информации.", 0)))
-            assert(!check_hashes_equals(hash_one_string("Это важное замечание!", 0), hash_one_string("Это важное\\замечание!", 0)))
+            assert(!(hashOneString("a", 0) == hashOneString("b", 0)))
+            assert(hashOneString("akhdkajdhshkfjd", 0) == hashOneString("akhdkajdhshkfjd", 0))
+            assert(!(hashOneString("aab", 0) == hashOneString("baa", 0)))
+            assert(!(hashOneString("abc\n", 0) == hashOneString("abc", 0)))
+            assert(!(hashOneString("abc ", 0) == hashOneString("abc", 0)))
+            assert(hashOneString("объёма информации.", 0) == hashOneString("объёма информации.", 0))
+            assert(!(hashOneString("Это важное замечание!", 0) == hashOneString("Это важное\\замечание!", 0)))
         }
  }

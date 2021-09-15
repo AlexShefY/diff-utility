@@ -3,8 +3,6 @@ import kotlin.math.min
 /*
  * Модули для подсчета хэшей
  */
-val mod1 : Long = 998244353
-val mod2 : Long = (1e9).toLong() + 7
 val mod = arrayOf(998244353L, (1e9).toLong() + 7, 16769023L, 1073676287L)
 val alph : Long = 10000
 /*
@@ -18,12 +16,32 @@ val alph : Long = 10000
  */
 var mass1 = setOf('!', ':', ';', ',', '.', '-')
 var mass2 = setOf(':', ';', ',', '-')
-fun hash_one_string(s1 : String, flag : Int) : Array <Long>{
-    var hash = Array<Long>(4){0L}
-    for(j in 0 until s1.length) {
-        for(k in 0..3){
+/*
+ * Создал класс для хэшей и переопределил оператор равно
+ */
+class Hash(var arr : Array<Long> = arrayOf(0L, 0L, 0L, 0L)){
+    fun add(sym : Char){
+        for(i in 0..3){
+            arr[i] = (arr[i] * alph + sym.code + 1) % mod[i]
+        }
+    }
+    override operator fun equals(other : Any?): Boolean{
+        if(other !is Hash){
+            return false
+        }
+        for(i in 0..3){
+            if(this.arr[i] != other.arr[i]){
+                return false
+            }
+        }
+        return true
+    }
+}
+fun hashOneString(s1 : String, flag : Int) : Hash{
+    var hash = Hash(arrayOf(0L, 0L, 0L, 0L))
+    for(j in s1.indices) {
             if(flag == 0 || flag == 2) {
-                hash[k] = (hash[k] * alph + (s1[j]).toInt() + 1) % mod[k]
+                hash.add(s1[j])
             }
             else if(flag == 1)
             {
@@ -31,58 +49,45 @@ fun hash_one_string(s1 : String, flag : Int) : Array <Long>{
                 if(t.isUpperCase()){
                     t = t.toLowerCase()
                 }
-                hash[k] = (hash[k] * alph + t.toInt() + 1) % mod[k]
+                hash.add(t)
             }
             else{
                 if(s1[j] !in mass2){
-                    hash[k] = (hash[k] * alph + (s1[j]).toInt() + 1) % mod[k]
+                    hash.add(s1[j])
                 }
             }
-        }
     }
     return hash
 }
 /*
  * Функция, подсчитывающая хэши для набора строк
  */
-fun hashes(n : Int, s1 : List <String>, flag : Int) : Array<Array<Long>>{
-    var hashof : Array<Array<Long>> = Array(n) {Array (4) {0L} }
+fun hashes(n : Int, s1 : List <String>, flag : Int) : Array<Hash>{
+    var hashof : Array<Hash> = Array(n) {Hash()}
     for(i in 0 until n){
-        hashof[i] = hash_one_string(s1[i], flag)
+        hashof[i] = hashOneString(s1[i], flag)
     }
     return hashof
 }
 /*
- * Функция, определяющая по подсчитанным хэшам для двух строк равны ли эти строки
- */
-fun check_hashes_equals(a : Array<Long>, b : Array<Long>) : Boolean
-{
-    for(i in 0..3){
-        if(a[i] != b[i]){
-            return false
-        }
-    }
-    return true
-}
-/*
  * Следующий класс предназначен для хранения входных данных
  */
-data class for_input(var n : Int, var m : Int, var text1 : List<String>, var text2 : List<String>)
+data class ForInput(var n : Int, var m : Int, var text1 : List<String>, var text2 : List<String>)
 // Класс предназначенный для хранения значения динамики и данных, необходимых для восстановления ответа.
-data class elem(var value : Int, var i_pred : Int, var j_pred : Int)
+data class Elem(var value : Int, var i_pred : Int, var j_pred : Int)
 /*
  * Отдельная функция для подсчета массивов, предназначенных для восстановления наибольшей общей подпоследовательности
  */
 
-fun calc_dp(n : Int, m : Int, hashfirst : Array<Array<Long>>, hashsecond : Array<Array<Long>>) : Array<Array<elem> >{
+fun calcDp(n : Int, m : Int, hashFirst : Array<Hash>, hashSecond : Array<Hash>) : Array<Array<Elem> >{
     /*
      * Функция equals сравнивает две строки сравнением хэшей, насчитанных по этим строкам.
      */
     fun equals(i : Int, j : Int) : Boolean{
-        return check_hashes_equals(hashfirst[i], hashsecond[j])
+        return hashFirst[i] == hashSecond[j]
     }
-    var dp : Array<Array<elem>> = Array(n + 1){Array<elem> (m + 1){elem(-1, 0, 0)} }
-    dp[0][0] = elem(0, 0, 0)
+    var dp : Array<Array<Elem>> = Array(n + 1){Array<Elem> (m + 1){Elem(-1, 0, 0)} }
+    dp[0][0] = Elem(0, 0, 0)
     for(i in 0..n){
         for(j in 0..m){
             if(i != 0 && j != 0 && equals(i - 1, j - 1) && dp[i][j].value < dp[i - 1][j - 1].value + 1){
@@ -113,70 +118,70 @@ var GREEN : String = "\u001B[32m";
 /*
  * Восстанавливает ответ по динамике. Выводит построчно добавленные, неизмененные и удаленные строки
  */
-fun print_answer(data_input : for_input, dp : Array<Array<elem>>){
+fun printAnswer(dataInput : ForInput, dp : Array<Array<Elem>>){
     var answer = mutableListOf<String>()
-    var i = data_input.n
-    var j = data_input.m
-    var _size = 0
+    var i = dataInput.n
+    var j = dataInput.m
+    var size = 0
     while(i > 0 || j > 0){
         var i1 = dp[i][j].i_pred
         var j1 = dp[i][j].j_pred
         var t = j
         while(t > j1){
-            _size++
-            answer.add("+${data_input.text2[t - 1]}")
+            size++
+            answer.add("+${dataInput.text2[t - 1]}")
             t--
         }
         t = i
         while(t > i1) {
-            _size++
-            answer.add("-${data_input.text1[t - 1]}")
+            size++
+            answer.add("-${dataInput.text1[t - 1]}")
             t--
         }
         if(i1 != 0) {
-            _size++
-            answer.add("=${data_input.text1[i1 - 1]}")
+            size++
+            answer.add("=${dataInput.text1[i1 - 1]}")
         }
         i = i1 - 1
         j = j1 - 1
     }
     var it = 0
-    while(_size > 0){
-        _size--
-        if(answer[_size][0] == '+'){
-            println(GREEN+answer[_size]+RESET);
+    while(size > 0){
+        size--
+        if(answer[size][0] == '+'){
+            println(GREEN+answer[size]+RESET);
             it++
         }
-        else if(answer[_size][0] == '-'){
-            println(RED+answer[_size]+RESET);
+        else if(answer[size][0] == '-'){
+            println(RED+answer[size]+RESET);
         }
         else
         {
-            println(answer[_size]);
+            println(answer[size]);
             it++
         }
     }
 }
 
-fun diff(data_input : for_input, flag : Int){
-    var hashfirst = hashes(data_input.n, data_input.text1, flag) // подсчитываем хэши для первого текста
-    var hashsecond = hashes(data_input.m, data_input.text2, flag) // подсчитываем хэши для второго текста
-    var cur = calc_dp(data_input.n, data_input.m, hashfirst, hashsecond)
-    print_answer(data_input, cur)
+fun diff(dataInput : ForInput, flag : Int){
+    var hashfirst = hashes(dataInput.n, dataInput.text1, flag) // подсчитываем хэши для первого текста
+    var hashsecond = hashes(dataInput.m, dataInput.text2, flag) // подсчитываем хэши для второго текста
+    var cur = calcDp(dataInput.n, dataInput.m, hashfirst, hashsecond)
+    printAnswer(dataInput, cur)
 }
 
 
-fun funct(s : String) : String{
+fun spaces(s : String) : String{
     var flag : Boolean = false
     var s1 : String = ""
-    var s_list = mutableListOf<Char>()
-    for(j in 0..(s.length-1)){
+    var sList = mutableListOf<Char>()
+    for(j in s.indices){
         if(s[j] != ' '){
-            if(!flag && s_list.size > 0 && s[j] !in mass1){
-                s_list.add(' ')
+            if(!flag && sList.size > 0 && s[j] !in mass1){
+                sList.add(' ')
             }
-            else if(flag && s_list.last() in mass1){
-                s_list.add(' ')
+            else if(flag && sList.last() in mass1){
+                sList.add(' ')
             }
             flag = true
         }
@@ -184,14 +189,14 @@ fun funct(s : String) : String{
             flag = false
         }
         if(flag){
-            s_list.add(s[j])
+            sList.add(s[j])
         }
     }
-    while(s_list.size > 0 && s_list.last() == ' ')
+    while(sList.size > 0 && sList.last() == ' ')
     {
-        s_list.removeLast()
+        sList.removeLast()
     }
-    for(c in s_list){
+    for(c in sList){
         s1 += c
     }
     return s1
@@ -199,7 +204,7 @@ fun funct(s : String) : String{
 /*
  * В следующей функции я считываю содержимое файлов.
 */
-fun input_(args : Array <String>, flag : Int) : for_input?{
+fun input(args : Array <String>, flag : Int) : ForInput?{
     var n : Int = 0
     var m : Int = 0
     var text1 = mutableListOf<String>()
@@ -229,18 +234,18 @@ fun input_(args : Array <String>, flag : Int) : for_input?{
         return null
     }
     if(flag == 2){
-        var new_text1 = mutableListOf<String>()
-        var new_text2 = mutableListOf<String>()
+        var newText1 = mutableListOf<String>()
+        var newText2 = mutableListOf<String>()
         for(lines in text1){
-            new_text1.add(funct(lines))
+            newText1.add(spaces(lines))
         }
         for(lines in text2){
-            new_text2.add(funct(lines))
+            newText2.add(spaces(lines))
         }
-        text1 = new_text1
-        text2 = new_text2
+        text1 = newText1
+        text2 = newText2
     }
-    return for_input(n, m, text1, text2)
+    return ForInput(n, m, text1, text2)
 }
 /*
  * Функция, созданная для проверки корректности работы прогрмаммы.
@@ -248,22 +253,19 @@ fun input_(args : Array <String>, flag : Int) : for_input?{
  * И в тестах мы уже проверяем найденную длину наибольшей подпоследовательности с корректной.
  */
 
-fun dp_value(args : Array <String>, flag : Int) : Int{
-    var data_input = input_(args, flag)
-    if(data_input == null){
-        return -1
-    }
-    var hashfirst = hashes(data_input.n, data_input.text1, flag) // подсчитываем хэши для первого текста
-    var hashsecond = hashes(data_input.m, data_input.text2, flag) // подсчитываем хэши для второго текста
-    var cur = calc_dp(data_input.n, data_input.m, hashfirst, hashsecond)
-    return cur[data_input.n][data_input.m].value
+fun dpValue(args : Array <String>, flag : Int) : Int{
+    var dataInput = input(args, flag) ?: return -1
+    var hashFirst = hashes(dataInput.n, dataInput.text1, flag) // подсчитываем хэши для первого текста
+    var hashSecond = hashes(dataInput.m, dataInput.text2, flag) // подсчитываем хэши для второго текста
+    var cur = calcDp(dataInput.n, dataInput.m, hashFirst, hashSecond)
+    return cur[dataInput.n][dataInput.m].value
 }
 /*
  * В функции main проверяем входные данный на правильность
  */
 fun main(args: Array<String>) {
-    var Arr : Array<String> = arrayOf("-s", "-lu", "-sp", "-p")
-    if(args.size != 3 || !(args[0] in Arr)){
+    var arr : Array<String> = arrayOf("-s", "-lu", "-sp", "-p")
+    if(args.size != 3 || args[0] !in arr){
         println("Please, enter the command")
         println("-s  -- print the output of diff on input data")
         println("-lu  -- do not distinguish between lowercase and uppercase letters")
@@ -272,14 +274,14 @@ fun main(args: Array<String>) {
     }
     else {
         var flag = when(args[0]){
-            Arr[0] -> 0
-            Arr[1] -> 1
-            Arr[2] -> 2
+            arr[0] -> 0
+            arr[1] -> 1
+            arr[2] -> 2
             else -> 3
         }
-        var data_input = input_(arrayOf(args[1], args[2]), flag)
-        if(data_input != null){
-            diff(data_input, flag)
+        var dataInput = input(arrayOf(args[1], args[2]), flag)
+        if(dataInput != null){
+            diff(dataInput, flag)
         }
     }
 }
