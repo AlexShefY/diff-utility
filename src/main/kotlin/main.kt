@@ -1,6 +1,5 @@
 import java.io.File
 import kotlin.math.min
-
 /*
  * Модули для подсчета хэшей
  */
@@ -8,14 +7,12 @@ val mod1 : Long = 998244353
 val mod2 : Long = (1e9).toLong() + 7
 val mod = arrayOf(998244353L, (1e9).toLong() + 7, 16769023L, 1073676287L)
 val alph : Long = 10000
-
 /*
  * Захэшруем строки из наборов, чтобы можно было быстро проверять их на равентсво.
  * Вместо самих строк на равенство будем сравнивать по четыре хэша, вычисленных по разным модулям (много
  * хэшей считать не будем, но использование двух хэшей сильно снизит вероятность коллизий по сравнению
  * с использованием одного).
  */
-
 /*
  * Функция, считающая хэши для одной строки
  */
@@ -67,13 +64,10 @@ fun check_hashes_equals(a : Array<Long>, b : Array<Long>) : Boolean
     }
     return true
 }
-
 /*
  * Следующий класс предназначен для хранения входных данных
  */
 data class for_input(var n : Int, var m : Int, var text1 : List<String>, var text2 : List<String>)
-
-
 // Класс предназначенный для хранения значения динамики и данных, необходимых для восстановления ответа.
 data class elem(var value : Int, var i_pred : Int, var j_pred : Int)
 /*
@@ -109,17 +103,12 @@ fun calc_dp(n : Int, m : Int, hashfirst : Array<Array<Long>>, hashsecond : Array
     }
     return dp
 }
-
 /*
  * Цвета для подкрашивания результата
  */
 val RESET : String = "\u001B[0m";
 val RED : String = "\u001B[31m";
 var GREEN : String = "\u001B[32m";
-
-
-
-
 /*
  * Восстанавливает ответ по динамике. Выводит построчно добавленные, неизмененные и удаленные строки
  */
@@ -208,7 +197,7 @@ fun funct(s : String) : String{
 }
 /*
  * В следующей функции я считываю содержимое файлов.
- */
+*/
 fun input_(args : Array <String>, flag : Int) : for_input?{
     var n : Int = 0
     var m : Int = 0
@@ -258,7 +247,6 @@ fun input_(args : Array <String>, flag : Int) : for_input?{
  * И в тестах мы уже проверяем найденную длину наибольшей подпоследовательности с корректной.
  */
 
-
 fun dp_value(args : Array <String>, flag : Int) : Int{
     var data_input = input_(args, flag)
     if(data_input == null){
@@ -266,8 +254,6 @@ fun dp_value(args : Array <String>, flag : Int) : Int{
     }
     var hashfirst = hashes(data_input.n, data_input.text1, flag) // подсчитываем хэши для первого текста
     var hashsecond = hashes(data_input.m, data_input.text2, flag) // подсчитываем хэши для второго текста
-    var first : Array<Array<Int>>
-    var second : Array<Array<Int>>// first[i][j] и second[i][j] служат для восстановления ответа и
     var cur = calc_dp(data_input.n, data_input.m, hashfirst, hashsecond)
     return cur[data_input.n][data_input.m].value
 }
