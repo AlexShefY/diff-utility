@@ -189,4 +189,4 @@ internal class Test1 {
             assert(check_hashes_equals(hash_one_string("объёма информации.", 0), hash_one_string("объёма информации.", 0)))
             assert(!check_hashes_equals(hash_one_string("Это важное замечание!", 0), hash_one_string("Это важное\\замечание!", 0)))
         }
-    }
+ }

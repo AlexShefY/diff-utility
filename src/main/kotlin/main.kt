@@ -73,6 +73,7 @@ data class elem(var value : Int, var i_pred : Int, var j_pred : Int)
 /*
  * Отдельная функция для подсчета массивов, предназначенных для восстановления наибольшей общей подпоследовательности
  */
+
 fun calc_dp(n : Int, m : Int, hashfirst : Array<Array<Long>>, hashsecond : Array<Array<Long>>) : Array<Array<elem> >{
     /*
      * Функция equals сравнивает две строки сравнением хэшей, насчитанных по этим строкам.
