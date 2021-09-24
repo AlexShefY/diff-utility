@@ -86,16 +86,16 @@ fun calcDp(n : Int, m : Int, hashFirst : Array<Hash>, hashSecond : Array<Hash>) 
     }
     var dp : Array<IntArray> = Array(n + 1){IntArray (m + 1) {0}}
     dp[0][0] = 0
-    for(i in 0..n){
-        for(j in 0..m){
-            if(i != 0 && j != 0 && equals(i - 1, j - 1) && dp[i][j] < dp[i - 1][j - 1] + 1){
-                dp[i][j] = dp[i - 1][j - 1] + 1
+    for(from in 0..n){
+        for(to in 0..m){
+            if(from != 0 && to != 0 && equals(from - 1, to - 1) && dp[from][to] < dp[from - 1][to - 1] + 1){
+                dp[from][to] = dp[from - 1][to - 1] + 1
             }
-            if(i != 0 && dp[i - 1][j] > dp[i][j]){
-                dp[i][j] = dp[i - 1][j]
+            if(from != 0 && dp[from - 1][to] > dp[from][to]){
+                dp[from][to] = dp[from - 1][to]
             }
-            if(j != 0 && dp[i][j - 1] > dp[i][j]){
-                dp[i][j] = dp[i][j - 1]
+            if(to != 0 && dp[from][to - 1] > dp[from][to]){
+                dp[from][to] = dp[from][to - 1]
             }
         }
     }
@@ -112,25 +112,25 @@ var GREEN : String = "\u001B[32m";
  */
 fun printAnswer(dataInput : ForInput, dp : Array<IntArray>){
     var answer = mutableListOf<String>()
-    var i = dataInput.n
-    var j = dataInput.m
+    var from = dataInput.n
+    var to = dataInput.m
     var size = 0
-    while(i > 0 || j > 0){
-        while(j > 0 && dp[i][j - 1] == dp[i][j]){
+    while(from > 0 || to > 0){
+        while(to > 0 && dp[from][to - 1] == dp[from][to]){
             size++
-            j--
-            answer.add("+${dataInput.text2[j]}")
+            to--
+            answer.add("+${dataInput.text2[to]}")
         }
-        while(i > 0 && dp[i - 1][j] == dp[i][j]){
-            i--
+        while(from > 0 && dp[from - 1][to] == dp[from][to]){
+            from--
             size++
-            answer.add("-${dataInput.text1[i]}")
+            answer.add("-${dataInput.text1[from]}")
         }
-        if(i != 0 && j != 0) {
+        if(from != 0 && to != 0) {
             size++
-            answer.add("=${dataInput.text1[i - 1]}")
-            i--
-            j--
+            answer.add("=${dataInput.text1[from - 1]}")
+            from--
+            to--
         }
     }
     answer.reverse()
@@ -155,7 +155,9 @@ fun diff(dataInput : ForInput, flag : Int){
     printAnswer(dataInput, cur)
 }
 
-
+/*
+ * Нормируем строки по пробелам
+ */
 fun spaces(s : String) : String{
     var flag : Boolean = false
     var sList = mutableListOf<Char>()
