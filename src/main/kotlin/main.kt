@@ -14,34 +14,13 @@ val alph : Long = 10000
 var mass1 = setOf('!', ':', ';', ',', '.', '-')
 var mass2 = setOf(':', ';', ',', '-')
 /*
- * Создал класс для хэшей и переопределил оператор равно
+ * Функция, считающая хэш для одной строки
  */
-class Hash(var arr : Array<Long> = arrayOf(0L, 0L, 0L, 0L)){
-    fun add(sym : Char){
-        for(i in 0..3){
-            arr[i] = (arr[i] * alph + sym.code + 1) % mod[i]
-        }
-    }
-    override operator fun equals(other : Any?): Boolean{
-        if(other !is Hash){
-            return false
-        }
-        for(i in 0..3){
-            if(this.arr[i] != other.arr[i]){
-                return false
-            }
-        }
-        return true
-    }
-}
-/*
- * Функция, считающая хэши для одной строки
- */
-fun hashOneString(s1 : String, flag : Int) : Hash{
-    var hash = Hash(arrayOf(0L, 0L, 0L, 0L))
+fun hashOneString(s1 : String, flag : Int) : Int{
+    var res = ""
     s1.forEach { ch ->
             if(flag == 0 || flag == 2) {
-                hash.add(ch)
+                res += ch
             }
             else if(flag == 1)
             {
@@ -49,32 +28,32 @@ fun hashOneString(s1 : String, flag : Int) : Hash{
                 if(t.isUpperCase()){
                     t = t.lowercaseChar()
                 }
-                hash.add(t)
+                res += t
             }
             else{
                 if(ch !in mass2){
-                    hash.add(ch)
+                    res += ch
                 }
             }
     }
-    return hash
+    return res.hashCode()
 }
 /*
  * Функция, подсчитывающая хэши для набора строк
  */
-fun hashes(n : Int, s1 : List <String>, flag : Int) : Array<Hash>{
-    var hashof : Array<Hash> = Array(n) {Hash()}
+fun hashes(n : Int, s1 : List <String>, flag : Int) : IntArray{
+    var hashOf = IntArray(n) {0}
     for(i in 0 until n){
-        hashof[i] = hashOneString(s1[i], flag)
+        hashOf[i] = hashOneString(s1[i], flag)
     }
-    return hashof
+    return hashOf
 }
 
 /*
  * Отдельная функция для подсчета массивов, предназначенных для восстановления наибольшей общей подпоследовательности
  */
 
-fun calcDp(n : Int, m : Int, hashFirst : Array<Hash>, hashSecond : Array<Hash>) : Array<IntArray>{
+fun calcDp(n : Int, m : Int, hashFirst : IntArray, hashSecond : IntArray) : Array<IntArray>{
     /*
      * Функция equals сравнивает две строки сравнением хэшей, насчитанных по этим строкам.
      */
