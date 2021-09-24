@@ -1,22 +1,23 @@
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.PrintStream
-import kotlin.test.*
 import java.io.File
+import java.io.PrintStream
+import kotlin.math.max
 import kotlin.math.min
+import kotlin.test.*
 
-val m : Int = 100
+
+val m : Int = 10000
 internal class Test1 {
     private val standardOut = System.out
     private val standardIn = System.`in`
     private val stream = ByteArrayOutputStream()
     var end : Int = 0
     /*
-     * Функция , проверяющая вывод программы, чтобы при выполнении
-     * выведенных команд из исходного текста мы получили конечный
+     * Функция , которая обрабатывает вывод программы и
+     * формирует данные, которые передаются в
+     * функцию correctCommands
      */
-    fun correct(file1 : String, file2 : String) : Boolean{
-        var text0 = mutableListOf<String>()
+    fun getData(file1 : String, file2 : String) : MutableList<MutableList<String>> {
         var text1 = mutableListOf<String>()
         File(file1).useLines { lines ->
             lines.forEach {
@@ -33,57 +34,22 @@ internal class Test1 {
         var j = 0
         var j1 = 0
         var p1 = 0
-        var tp = mutableListOf<String>()
+        var commands = mutableListOf<String>()
         for(lines in stream.toString().trim().lines()){
             if(p1 < end){
                 p1++
                 continue
             }
             p1++
-            tp.add(lines)
+            commands.add(lines)
             if(lines.length == 0){
                 end++
                 continue
             }
-            var s1 = ""
-            var t : Int = 0
-            while(t < lines.length && lines[t] != '+' && lines[t] != '=' && lines[t] != '-'){
-                t++
-            }
-            var t1 = 0
-            if(lines[t] == '='){
-                t1 = lines.length
-            }
-            else{
-                t1 = lines.length - 4
-            }
-            if(t + 1 < t1) {
-                var p = t + 1
-                while(p < t1){
-                    s1 += lines[p]
-                    p++
-                }
-            }
-            if(lines[t] == '+'){
-                text0.add(s1)
-                j1++
-            }
-            else if(lines[t] == '-'){
-                j++
-            }
-            else if(lines[t] == '=')
-            {
-                if(j == text1.size){
-                    assert(false)
-                }
-                text0.add(s1)
-                j++
-                j1++
-            }
         }
         end = p1
-        return text0 == text2
-        }
+        return mutableListOf(text1, text2, commands)
+    }
         @BeforeTest
         fun setUp() {
             System.setOut(PrintStream(stream))
@@ -103,22 +69,22 @@ internal class Test1 {
         }
         @Test
         fun test2() {
-            assert(correct("file1.txt", "file2.txt"))
+            assertTrue(correctCommands(getData("file1.txt", "file2.txt")))
             end = 0
         }
         @Test
         fun test3() {
-            assert(correct("file3.txt", "file4.txt"))
+            assertTrue(correctCommands(getData("file3.txt", "file4.txt")))
             end = 0
         }
         @Test
         fun test4(){
-            assert(correct("file5.txt", "file6.txt"))
+            assertTrue(correctCommands(getData("file5.txt", "file6.txt")))
             end = 0
         }
         @Test
         fun test6(){
-            var t : Int = 100
+            var t : Int = 10
             while(t > 0){
                 t--
                 var text_ = mutableListOf<String>()
@@ -127,13 +93,13 @@ internal class Test1 {
                         text_.add(it)
                     }
                 }
-                var n : Int = min(100, text_.size)
-                var n1 : Int = (1..n).random()
-                var n2 : Int = (0..(n - n1)).random()
+                var n : Int = m
+                var n1 : Int = ((n - 100)..n).random()
+                var n2 : Int = (0..((n - n1))).random()
                 var text1 = mutableListOf<String>()
                 var text_add = mutableListOf<String>()
                 for(j in 0 until n1){
-                    var idx : Int = (1..n1).random() - 1
+                    var idx : Int = (1..text_.size).random() - 1
                     text1.add(text_[idx])
                 }
 
@@ -150,7 +116,7 @@ internal class Test1 {
                     text2.add(idx1, text_add[idx2])
                     m_add--
                 }
-                var m_del = min(text2.size, m)
+                var m_del = min(max(0, text2.size - 8000), m) / 2
                 m_del = (0..m_del).random()
                 while(m_del > 0){
                     text2.removeAt((text2.indices).random())
@@ -170,23 +136,23 @@ internal class Test1 {
                         out.println("$it")
                     }
                 }
-                assert(correct("file9.txt", "file8.txt"))
+                assertTrue(correctCommands(getData("file9.txt", "file8.txt")))
             }
             end = 0
         }
         @Test
         fun test7(){
-            assert(correct("file9.txt", "file8.txt"))
+            assertTrue(correctCommands(getData("file9.txt", "file8.txt")))
             end = 0
         }
         @Test
         fun test_hashes(){
-            assert(!(hashOneString("a", 0) == hashOneString("b", 0)))
-            assert(hashOneString("akhdkajdhshkfjd", 0) == hashOneString("akhdkajdhshkfjd", 0))
-            assert(!(hashOneString("aab", 0) == hashOneString("baa", 0)))
-            assert(!(hashOneString("abc\n", 0) == hashOneString("abc", 0)))
-            assert(!(hashOneString("abc ", 0) == hashOneString("abc", 0)))
-            assert(hashOneString("объёма информации.", 0) == hashOneString("объёма информации.", 0))
-            assert(!(hashOneString("Это важное замечание!", 0) == hashOneString("Это важное\\замечание!", 0)))
+            assertTrue(hashOneString("a", 0) != hashOneString("b", 0))
+            assertEquals(hashOneString("akhdkajdhshkfjd", 0), hashOneString("akhdkajdhshkfjd", 0))
+            assertTrue(hashOneString("aab", 0) != hashOneString("baa", 0))
+            assertTrue(hashOneString("abc\n", 0) != hashOneString("abc", 0))
+            assertTrue(hashOneString("abc ", 0) != hashOneString("abc", 0))
+            assertEquals(hashOneString("объёма информации.", 0), hashOneString("объёма информации.", 0))
+            assertTrue(hashOneString("Это важное замечание!", 0) != hashOneString("Это важное\\замечание!", 0))
         }
  }
