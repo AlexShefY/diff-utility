@@ -136,59 +136,12 @@ fun diff(dataInput : ForInput, flag : Int){
 
 
 /*
- * В следующей функции я считываю содержимое файлов.
-*/
-fun input(args : Array <String>, flag : Int) : ForInput?{
-    var n : Int = 0
-    var m : Int = 0
-    var text1 = mutableListOf<String>()
-    var text2 = mutableListOf<String>()
-    try {
-        File(args[0]).useLines { lines ->
-            lines.forEach {
-                text1.add(it)
-                n++
-            }
-        }
-    }
-    catch(e: Exception){
-        println("Wrong name of file: ${args[0]}")
-        return null
-    }
-    try {
-        File(args[1]).useLines { lines ->
-            lines.forEach {
-                text2.add(it)
-                m++
-            }
-        }
-    }
-    catch(e: Exception){
-        println("Wrong name of file: ${args[1]}")
-        return null
-    }
-    if(flag == 2){
-        var newText1 = mutableListOf<String>()
-        var newText2 = mutableListOf<String>()
-        for(lines in text1){
-            newText1.add(spaces(lines))
-        }
-        for(lines in text2){
-            newText2.add(spaces(lines))
-        }
-        text1 = newText1
-        text2 = newText2
-    }
-    return ForInput(n, m, text1, text2)
-}
-
-/*
  * Функция, созданная для проверки корректности работы прогрмаммы.
  * Она возвращает длину наибольшей общей подпоследовательности.
  * И в тестах мы уже проверяем найденную длину наибольшей подпоследовательности с корректной.
  */
 fun dpValue(args : Array <String>, flag : Int) : Int{
-    var dataInput = input(args, flag) ?: return -1
+    var dataInput = InputFiles(args, flag) ?: return -1
     var hashFirst = hashes(dataInput.n, dataInput.text1, flag) // подсчитываем хэши для первого текста
     var hashSecond = hashes(dataInput.m, dataInput.text2, flag) // подсчитываем хэши для второго текста
     var cur = calcDp(dataInput.n, dataInput.m, hashFirst, hashSecond)
@@ -213,7 +166,7 @@ fun main(args: Array<String>) {
             arr[2] -> 2
             else -> 3
         }
-        var dataInput = input(arrayOf(args[1], args[2]), flag)
+        var dataInput = InputFiles(arrayOf(args[1], args[2]), flag)
         if(dataInput != null){
             diff(dataInput, flag)
         }
