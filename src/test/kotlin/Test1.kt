@@ -5,8 +5,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.test.*
 
-
-val m : Int = 10000
 internal class Test1 {
     private val standardOut = System.out
     private val standardIn = System.`in`
@@ -18,18 +16,8 @@ internal class Test1 {
      * функцию correctCommands
      */
     fun getData(file1 : String, file2 : String) : MutableList<MutableList<String>> {
-        var text1 = mutableListOf<String>()
-        File(file1).useLines { lines ->
-            lines.forEach {
-                text1.add(it)
-            }
-        }
-        var text2 = mutableListOf<String>()
-        File(file2).useLines { lines ->
-            lines.forEach {
-                text2.add(it)
-            }
-        }
+        var text1 = inputOneFile(file1)
+        var text2 = inputOneFile(file2)
         main(arrayOf("-s", file1, file2))
         var j = 0
         var j1 = 0
@@ -59,8 +47,6 @@ internal class Test1 {
             System.setOut(standardOut)
             System.setIn(standardIn)
         }
-
-
         @Test
         fun test1() {
             assertEquals(16, dpValue(arrayOf("file1.txt", "file2.txt"), 0))
@@ -82,61 +68,18 @@ internal class Test1 {
             assertTrue(correctCommands(getData("file5.txt", "file6.txt")))
             end = 0
         }
+        /*
+         * Функция, проверяющая рандомные сгенерированные тесты
+         */
         @Test
         fun test6(){
             var t : Int = 10
             while(t > 0){
                 t--
-                var text_ = mutableListOf<String>()
-                File("file7.txt").useLines { lines ->
-                    lines.forEach {
-                        text_.add(it)
-                    }
-                }
-                var n : Int = m
-                var n1 : Int = ((n - 100)..n).random()
-                var n2 : Int = (0..((n - n1))).random()
-                var text1 = mutableListOf<String>()
-                var text_add = mutableListOf<String>()
-                for(j in 0 until n1){
-                    var idx : Int = (1..text_.size).random() - 1
-                    text1.add(text_[idx])
-                }
-
-                File("file9.txt").printWriter().use { out ->
-                    text1.forEach {
-                        out.println("$it")
-                    }
-                }
-                var text2 = text1
-                var m_add = (0..m).random()
-                while(m_add > 0 && text_add.size > 0){
-                    var idx1 = (0..text2.size).random()
-                    var idx2 = (text_add.indices).random()
-                    text2.add(idx1, text_add[idx2])
-                    m_add--
-                }
-                var m_del = min(max(0, text2.size - 8000), m) / 2
-                m_del = (0..m_del).random()
-                while(m_del > 0){
-                    text2.removeAt((text2.indices).random())
-                    m_del--
-                }
-                var m_swap = (0..m).random()
-                while(m_swap > 0 && text2.size > 0){
-                    var idx1 = (text2.indices).random()
-                    var idx2 = (text2.indices).random()
-                    var c = text2[idx2]
-                    text2[idx2] = text2[idx1]
-                    text2[idx1] = c
-                    m_swap--
-                }
-                File("file8.txt").printWriter().use { out ->
-                    text2.forEach {
-                        out.println("$it")
-                    }
-                }
-                assertTrue(correctCommands(getData("file9.txt", "file8.txt")))
+                var (text1, text2) = generate() // генерируем исходный и конечный текст
+                outputFile(text1, "file9.txt") // записываем их в файлы
+                outputFile(text2, "file8.txt")
+                assertTrue(correctCommands(getData("file9.txt", "file8.txt"))) // запускаем correct на этих файлах
             }
             end = 0
         }
