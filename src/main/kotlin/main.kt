@@ -69,10 +69,7 @@ fun hashes(n : Int, s1 : List <String>, flag : Int) : Array<Hash>{
     }
     return hashof
 }
-/*
- * Следующий класс предназначен для хранения входных данных
- */
-data class ForInput(var n : Int, var m : Int, var text1 : List<String>, var text2 : List<String>)
+
 /*
  * Отдельная функция для подсчета массивов, предназначенных для восстановления наибольшей общей подпоследовательности
  */
@@ -81,8 +78,8 @@ fun calcDp(n : Int, m : Int, hashFirst : Array<Hash>, hashSecond : Array<Hash>) 
     /*
      * Функция equals сравнивает две строки сравнением хэшей, насчитанных по этим строкам.
      */
-    fun equals(i : Int, j : Int) : Boolean{
-        return hashFirst[i] == hashSecond[j]
+    fun equals(from : Int, to : Int) : Boolean{
+        return hashFirst[from] == hashSecond[to]
     }
     var dp : Array<IntArray> = Array(n + 1){IntArray (m + 1) {0}}
     dp[0][0] = 0
@@ -101,59 +98,7 @@ fun calcDp(n : Int, m : Int, hashFirst : Array<Hash>, hashSecond : Array<Hash>) 
     }
     return dp
 }
-/*
- * Цвета для подкрашивания результата
- */
-val RESET : String = "\u001B[0m";
-val RED : String = "\u001B[31m";
-var GREEN : String = "\u001B[32m";
-/*
- * Восстанавливает ответ по динамике. Выводит построчно добавленные, неизмененные и удаленные строки
- */
-fun printAnswer(dataInput : ForInput, dp : Array<IntArray>){
-    var answer = mutableListOf<String>()
-    var from = dataInput.n
-    var to = dataInput.m
-    var size = 0
-    while(from > 0 || to > 0){
-        while(to > 0 && dp[from][to - 1] == dp[from][to]){
-            size++
-            to--
-            answer.add("+${dataInput.text2[to]}")
-        }
-        while(from > 0 && dp[from - 1][to] == dp[from][to]){
-            from--
-            size++
-            answer.add("-${dataInput.text1[from]}")
-        }
-        if(from != 0 && to != 0) {
-            size++
-            answer.add("=${dataInput.text1[from - 1]}")
-            from--
-            to--
-        }
-    }
-    answer.reverse()
-    answer.forEach{ str ->
-        if(str[0] == '+'){
-            println(GREEN+str+RESET);
-        }
-        else if(str[0] == '-'){
-            println(RED+str+RESET);
-        }
-        else
-        {
-            println(str);
-        }
-    }
-}
 
-fun diff(dataInput : ForInput, flag : Int){
-    var hashFirst = hashes(dataInput.n, dataInput.text1, flag) // подсчитываем хэши для первого текста
-    var hashSecond = hashes(dataInput.m, dataInput.text2, flag) // подсчитываем хэши для второго текста
-    var cur = calcDp(dataInput.n, dataInput.m, hashFirst, hashSecond)
-    printAnswer(dataInput, cur)
-}
 
 /*
  * Нормируем строки по пробелам
@@ -181,6 +126,15 @@ fun spaces(s : String) : String{
     var sList1 = sList.dropWhile({it == ' '})
     return sList1.joinToString("")
 }
+
+fun diff(dataInput : ForInput, flag : Int){
+    var hashFirst = hashes(dataInput.n, dataInput.text1, flag) // подсчитываем хэши для первого текста
+    var hashSecond = hashes(dataInput.m, dataInput.text2, flag) // подсчитываем хэши для второго текста
+    var cur = calcDp(dataInput.n, dataInput.m, hashFirst, hashSecond)
+    dataInput.printAnswer(cur)
+}
+
+
 /*
  * В следующей функции я считываю содержимое файлов.
 */
@@ -227,12 +181,12 @@ fun input(args : Array <String>, flag : Int) : ForInput?{
     }
     return ForInput(n, m, text1, text2)
 }
+
 /*
  * Функция, созданная для проверки корректности работы прогрмаммы.
  * Она возвращает длину наибольшей общей подпоследовательности.
  * И в тестах мы уже проверяем найденную длину наибольшей подпоследовательности с корректной.
  */
-
 fun dpValue(args : Array <String>, flag : Int) : Int{
     var dataInput = input(args, flag) ?: return -1
     var hashFirst = hashes(dataInput.n, dataInput.text1, flag) // подсчитываем хэши для первого текста
