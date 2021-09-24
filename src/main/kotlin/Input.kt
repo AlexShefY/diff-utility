@@ -46,3 +46,17 @@ fun InputFiles (args : Array <String>, flag : Int) : ForInput?{
     }
     return ForInput(n, m, text1, text2)
 }
+
+/*
+ * Считывание содержимого одного файла
+ */
+
+fun inputOneFile(file : String) : MutableList<String>{
+    var text = mutableListOf<String>()
+    File(file).useLines { lines ->
+        lines.forEach {
+            text.add(it)
+        }
+    }
+    return text
+}
