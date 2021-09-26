@@ -1,9 +1,9 @@
 /*
  * Цвета для подкрашивания результата
  */
-val RESET : String = "\u001B[0m";
-val RED : String = "\u001B[31m";
-var GREEN : String = "\u001B[32m";
+const val RESET : String = "\u001B[0m";
+const val RED : String = "\u001B[31m";
+const val GREEN : String = "\u001B[32m";
 /*
  * Следующий класс предназначен для хранения входных данных
  */

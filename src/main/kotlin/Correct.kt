@@ -8,7 +8,6 @@ fun correctCommands(data : MutableList<MutableList<String>>) : Boolean{
     var commands : MutableList<String> = data[2]
     var j = 0
     var j1 = 0
-    var p1 = 0
     var text0 = mutableListOf<String>()
     for(command in commands){
         var s1 = ""
@@ -39,7 +38,7 @@ fun correctCommands(data : MutableList<MutableList<String>>) : Boolean{
         }
         else if(command[t] == '=')
         {
-            text0.add(s1)
+            text0.add(text1[j])
             j++
             j1++
         }

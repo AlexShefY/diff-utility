@@ -2,6 +2,8 @@ import java.io.File
 
 /*
  * В следующей функции я считываю содержимое файлов.
+ * Обрабатываем ошибки на случай, если пользователь
+ * неправильно введет имя файла
 */
 fun InputFiles (args : Array <String>, flag : Int) : ForInput?{
     var n : Int = 0

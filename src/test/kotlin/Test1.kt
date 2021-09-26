@@ -30,7 +30,7 @@ internal class Test1 {
             }
             p1++
             commands.add(lines)
-            if(lines.length == 0){
+            if(lines.isEmpty()){
                 end++
                 continue
             }
@@ -79,7 +79,7 @@ internal class Test1 {
                 var (text1, text2) = generate() // генерируем исходный и конечный текст
                 outputFile(text1, "file9.txt") // записываем их в файлы
                 outputFile(text2, "file8.txt")
-                assertTrue(correctCommands(getData("file9.txt", "file8.txt"))) // запускаем correct на этих файлах
+                assertTrue(correctCommands(getData("file9.txt", "file8.txt"))) // запускаем correctCommands на этих файлах
             }
             end = 0
         }
