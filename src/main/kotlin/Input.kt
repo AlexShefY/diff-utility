@@ -5,7 +5,7 @@ import java.io.File
  * Обрабатываем ошибки на случай, если пользователь
  * неправильно введет имя файла
 */
-fun InputFiles (args : Array <String>, flag : Int) : ForInput?{
+fun inputFiles (args : Array <String>, flag : Int) : ForInput?{
     var n : Int = 0
     var m : Int = 0
     var text1 = mutableListOf<String>()

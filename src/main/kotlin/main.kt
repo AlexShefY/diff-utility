@@ -70,7 +70,7 @@ fun main(args: Array<String>) {
             arr[2] -> 2
             else -> 3
         }
-        var dataInput = InputFiles(arrayOf(args[1], args[2]), flag)
+        var dataInput = inputFiles(arrayOf(args[1], args[2]), flag)
         if(dataInput != null){
             diff(dataInput, flag)
         }
