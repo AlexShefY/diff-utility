@@ -1,7 +1,7 @@
 import java.io.File
 
 /*
- * Выводит текст из списка в файл
+ * Outputs text from the list to a file
  */
 fun outputFile(text : MutableList<String>, file : String){
     File(file).printWriter().use { out ->

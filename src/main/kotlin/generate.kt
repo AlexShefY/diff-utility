@@ -1,12 +1,12 @@
 import kotlin.math.max
 import kotlin.math.min
-const val size: Int = 5000 // константа, от которой зависит размер тестов
+const val size: Int = 5000 // a constant that determines the size of the tests
 /*
- * Содержимое данного фалйа предназначено для рандомной генерации тестов
+ * The content of this file is intended for random test generation.
  */
 
 /*
- * Функция, добавляющая в текст рандомные строки
+ * Function that adds random strings to text
  */
 fun randomAdd(text2 : MutableList<String>, text_ : MutableList<String>) : MutableList<String> {
     var cntAdd = (0..size).random()
@@ -19,7 +19,7 @@ fun randomAdd(text2 : MutableList<String>, text_ : MutableList<String>) : Mutabl
     return text2
 }
 /*
- * Функция, удаляющая из текста рандомные строки
+ * Function that removes random lines from text
  */
 fun randomRemove(text : MutableList<String>) : MutableList<String>{
     var cntDel = min(max(0, text.size - 8000), size) / 2
@@ -31,7 +31,7 @@ fun randomRemove(text : MutableList<String>) : MutableList<String>{
     return text
 }
 /*
- * Функция,рандомно меняющая соседние строки местами
+ * A function that randomly swaps adjacent rows
  */
 fun randomSwap(text : MutableList<String>) : MutableList<String>{
     var cntSwap = (0..size).random()
@@ -48,7 +48,7 @@ fun randomSwap(text : MutableList<String>) : MutableList<String>{
 
 
 /*
- * Функция, генерирующая рандомные тестовые тексты
+ * Function that generates random test texts
  */
 fun generate() : Pair<MutableList<String>, MutableList<String>>{
     var text = inputOneFile("file7.txt") // из этого файла берем набор строк, из которых будут сгенерированы тексты

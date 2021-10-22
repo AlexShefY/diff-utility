@@ -1,9 +1,9 @@
 import java.io.File
 
 /*
- * В следующей функции я считываю содержимое файлов.
- * Обрабатываем ошибки на случай, если пользователь
- * неправильно введет имя файла
+ * In the next function, I read the contents of the files.
+ * We handle errors in case the user
+ * will enter the file name incorrectly
 */
 fun inputFiles (args : Array <String>, flag : Int) : ForInput?{
     var n : Int = 0
@@ -50,7 +50,7 @@ fun inputFiles (args : Array <String>, flag : Int) : ForInput?{
 }
 
 /*
- * Считывание содержимого одного файла
+ * Reading the contents of one file
  */
 
 fun inputOneFile(file : String) : MutableList<String>{

@@ -2,12 +2,12 @@ import java.io.File
 import kotlin.math.min
 
 /*
- * Отдельная функция для подсчета массивов, предназначенных для восстановления наибольшей общей подпоследовательности
+ * Separate function for counting arrays intended to reconstruct the largest common subsequence
  */
 
 fun calcDp(n : Int, m : Int, hashFirst : IntArray, hashSecond : IntArray) : Array<IntArray>{
     /*
-     * Функция equals сравнивает две строки сравнением хэшей, насчитанных по этим строкам.
+     * The function "equals" compares two strings by comparing the hashes calculated from these strings.
      */
     fun equals(from : Int, to : Int) : Boolean{
         return hashFirst[from] == hashSecond[to]
@@ -32,17 +32,17 @@ fun calcDp(n : Int, m : Int, hashFirst : IntArray, hashSecond : IntArray) : Arra
 
 
 fun diff(dataInput : ForInput, flag : Int){
-    var hashFirst = hashes(dataInput.n, dataInput.text1, flag) // подсчитываем хэши для первого текста
-    var hashSecond = hashes(dataInput.m, dataInput.text2, flag) // подсчитываем хэши для второго текста
+    var hashFirst = hashes(dataInput.n, dataInput.text1, flag) // counting hashes for the first text
+    var hashSecond = hashes(dataInput.m, dataInput.text2, flag) // counting hashes for the second text
     var cur = calcDp(dataInput.n, dataInput.m, hashFirst, hashSecond)
     dataInput.printAnswer(cur)
 }
 
 
 /*
- * Функция, созданная для проверки корректности работы прогрмаммы.
- * Она возвращает длину наибольшей общей подпоследовательности.
- * И в тестах мы уже проверяем найденную длину наибольшей подпоследовательности с корректной.
+ * A function created to check the correctness of the program.
+ * It returns the length of the longest common subsequence.
+ * And in the tests, we already check the found length of the longest subsequence with the correct one.
  */
 fun dpValue(args : Array <String>, flag : Int) : Int{
     var dataInput = InputFiles(args, flag) ?: return -1
@@ -52,7 +52,7 @@ fun dpValue(args : Array <String>, flag : Int) : Int{
     return cur[dataInput.n][dataInput.m]
 }
 /*
- * В функции main проверяем входные данный на правильность
+ * In the main function, we check the input data for correctness
  */
 fun main(args: Array<String>) {
     var arr : Array<String> = arrayOf("-s", "-lu", "-sp", "-p")

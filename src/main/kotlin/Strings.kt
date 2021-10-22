@@ -1,7 +1,7 @@
 var mass1 = setOf('!', ':', ';', ',', '.', '-')
 var mass2 = setOf(':', ';', ',', '-')
 /*
- * Функция, считающая хэш для одной строки
+ * Function that calculates the hash for one line
  */
 fun hashOneString(s1 : String, flag : Int) : Int{
     var res = ""
@@ -26,7 +26,7 @@ fun hashOneString(s1 : String, flag : Int) : Int{
     return res.hashCode()
 }
 /*
- * Функция, подсчитывающая хэши для набора строк
+ * Function that calculates hashes for a rowset
  */
 fun hashes(n : Int, s1 : List <String>, flag : Int) : IntArray{
     var hashOf = IntArray(n) {0}

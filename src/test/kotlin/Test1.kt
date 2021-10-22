@@ -11,9 +11,9 @@ internal class Test1 {
     private val stream = ByteArrayOutputStream()
     var end : Int = 0
     /*
-     * Функция , которая обрабатывает вывод программы и
-     * формирует данные, которые передаются в
-     * функцию correctCommands
+     * A function that processes the output of the program and
+     * generates data that is transmitted to
+     * correctCommands function
      */
     fun getData(file1 : String, file2 : String) : MutableList<MutableList<String>> {
         var text1 = inputOneFile(file1)
@@ -69,17 +69,17 @@ internal class Test1 {
             end = 0
         }
         /*
-         * Функция, проверяющая рандомные сгенерированные тесты
+         * Function that validates randomly generated tests
          */
         @Test
         fun test6(){
             var t : Int = 10
             while(t > 0){
                 t--
-                var (text1, text2) = generate() // генерируем исходный и конечный текст
-                outputFile(text1, "file9.txt") // записываем их в файлы
+                var (text1, text2) = generate() // generate source and destination text
+                outputFile(text1, "file9.txt") // write them to files
                 outputFile(text2, "file8.txt")
-                assertTrue(correctCommands(getData("file9.txt", "file8.txt"))) // запускаем correctCommands на этих файлах
+                assertTrue(correctCommands(getData("file9.txt", "file8.txt"))) // run correctCommands on these files
             }
             end = 0
         }

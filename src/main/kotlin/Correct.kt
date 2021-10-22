@@ -1,6 +1,6 @@
 /*
- * Функция , проверяющая вывод программы, чтобы при выполнении
- * выведенных команд из исходного текста мы получили конечный
+ * A function that checks the output of a program so that when executed
+ * commands output from the source text, we got the final
 */
 fun correctCommands(data : MutableList<MutableList<String>>) : Boolean{
     var text1 : MutableList<String> = data[0]

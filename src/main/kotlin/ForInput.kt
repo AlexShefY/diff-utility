@@ -1,15 +1,15 @@
 /*
- * Цвета для подкрашивания результата
+ * Colors to tint the result
  */
 const val RESET : String = "\u001B[0m";
 const val RED : String = "\u001B[31m";
 const val GREEN : String = "\u001B[32m";
 /*
- * Следующий класс предназначен для хранения входных данных
+ * The next class is for storing input data
  */
 data class ForInput(var n : Int, var m : Int, var text1 : List<String>, var text2 : List<String>){
     /*
-     * Восстанавливает ответ по динамике. Выводит построчно добавленные, неизмененные и удаленные строки
+     * Reconstructs the response based on dynamics. Displays line-by-line added, set and deleted lines
      */
     fun printAnswer(dp : Array<IntArray>){
         var answer = mutableListOf<String>()
