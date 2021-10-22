@@ -1,5 +1,5 @@
 # Курс основ программирования на МКН СПбГУ
-## Проект 1: утилита diff
+## Project1:  utility diff
 ### Terms of use
 >The program starts executing after starting the file pf-2021-diff-main.jar
 >that is in the directory pf-2021-diff-AlexShefY\out\artifacts\pf_2021_diff_main_jar
